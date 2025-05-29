@@ -25,29 +25,15 @@ jobs:
           cd node-app
           npm install
       
-      - name: Debug - List files
-        run: |
-          echo "=== Repository structure ==="
-          find . -name "*.json" -o -name "*.js" | head -20
-          echo "=== node-app directory contents ==="
-          ls -la node-app/
-          echo "=== Check if package-lock.json exists ==="
-          ls -la node-app/package-lock.json || echo "package-lock.json not found"
-      
       - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: 'fs'
-          path: './node-app'
+          scan-ref: './node-app'
           ignore-unfixed: true
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH,MEDIUM'
-      
-      - name: Debug - Check SARIF output
-        run: |
-          echo "=== SARIF file contents ==="
-          cat trivy-results.sarif || echo "SARIF file not found"
       
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
